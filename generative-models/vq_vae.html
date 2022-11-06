@@ -198,7 +198,7 @@
             <p style="font-size: 1.8rem; font-family: 'KaTeX';">$$ x \in \{0, 1, ..., 255\}^N $$</p>
             <p>Then <span style="color: rgb(246, 51, 102)"> Categorical Distribution</span> or <span
                     style="color: rgb(246, 51, 102)">Logistic Mixture Distribution</span> would be natural choices.</p>
-
+            <br>
             <h1>🍁 VQ-VAE Architecture</h1>
             <p>Vector Quantized VAE is composed of 3 main components: <span
                     style="color: rgb(246, 51, 102)">Encoder</span>, <span
@@ -219,7 +219,41 @@
                 </div>
             </figure>
             <p>The resultant vector that consists of the indexes of Codebook forms a sample of posterior distribuion
-                q(z|x) over the latent space. Then Decoder takes the collection of multiple Codebook latent vectors that are denoted by the indexes of samples of the posterior q(z|x).</p>
+                q(z|x) over the latent space. Then Decoder takes the collection of multiple Codebook latent vectors that
+                are denoted by the indexes of samples of the posterior q(z|x).</p>
+            <br>
+            <p>Note that, different than general VAE structure in which stochastic Encoder and Decoder pair is present,
+                VQ-VAE has deterministic mappings in both Encoder and Decoder, both networks are convolution based. So
+                far everything is fine but how do we learn the Codebook vectors? In the next section we will get into
+                that.</p>
+            <br>
+            <h1>🍁 Learning the Codebook Vectors</h1>
+            <p>So far we have discussed the important milestones of VQ-VAE architectural components but we haven't
+                touched how the Codebook vectors are learned since it is a bit tricky. Recall that argmin is not a
+                differentiable operator so in order to update encoder parameters we need to find a new way.</p>
+            <figure>
+                <div style="display: flex; justify-content:center">
+                    <img src="assets_vqvae/gradient_flow.png" alt="">
+                </div>
+                <div style="display: flex; justify-content:center">
+                    <figcaption style="margin-top: 10px; font-size:14px; color:#757575;"> Figure 3: Latent space is a
+                        low-dimensional manifold (2D above) in a higher-dimensional space (3D above). </figcaption>
+                </div>
+            </figure>
+            <p>Discrete optimization is an open research area nowadays. Current methods are mostly based on <a
+                    target="_blank" href="https://arxiv.org/abs/1308.3432"
+                    style="color: rgb(246, 51, 102)">Straight-Through Estimators</a>, <a target="_blank"
+                    href="https://arxiv.org/abs/1611.00712" style="color: rgb(246, 51, 102)">Gumbel Max Trick</a>, <a
+                    href="https://arxiv.org/abs/1611.01144" target="_blank" style="color: rgb(246, 51, 102)">Gumbel
+                    Softmax Trick</a> and recently proposed <a href="https://arxiv.org/abs/2106.01798"
+                    style="color: rgb(246, 51, 102)">Implicit MLE</a> method. However, the method used in VQ-VAE can be
+                described as simply copying the gradient from the decoder input z<sub>q</sub>(x) to the encoder output
+                z<sub>e</sub>(x).</p>
+                <br>
+            <p>Another key in optimizing the entire network comes from the relation of encoder output latent vectors and the Codebook latent vectors. By design, we want ecoder vectors as close as the Codebook vectors and Codebook vectors as close as Encoder vectors. To satisfy this, we add a loss term associated with each case to the objective function. </p>
+            <p style="font-size: 1.8rem; font-family: 'KaTeX';">$$ L = log\hspace{2pt}p(x|z_q(x)) + ||\hspace{1pt}sg[z_e(x)] - e\hspace{1pt}||_2^2 + ||\hspace{1pt}z_e(x) - sg[e]\hspace{1pt}||_2^2$$</p>
+            
+            
             <!-- Blog End -->
         </div>
 
