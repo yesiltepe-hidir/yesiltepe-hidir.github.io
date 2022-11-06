@@ -21,7 +21,7 @@
         <div class="navbar">
             <ul>
                 <li class='navr'><a class='nava' href="#">Contact</a></li>
-                <li class='navr'><a class='nava' href="../about/index.html">About</a></li>
+                <li class='navr'><a class='nava' href="https://www.sites.google.com/view/hidir-yesiltepe/" target="_blank">About</a></li>
                 <li class='navl'><a class='nava' href="../index.html">Home</a></li>
             </ul>
         </div>
@@ -249,12 +249,46 @@
                     style="color: rgb(246, 51, 102)">Implicit MLE</a> method. However, the method used in VQ-VAE can be
                 described as simply copying the gradient from the decoder input z<sub>q</sub>(x) to the encoder output
                 z<sub>e</sub>(x).</p>
-                <br>
-            <p>Another key in optimizing the entire network comes from the relation of encoder output latent vectors and the Codebook latent vectors. By design, we want ecoder vectors as close as the Codebook vectors and Codebook vectors as close as Encoder vectors. To satisfy this, we add a loss term associated with each case to the objective function. </p>
-            <p style="font-size: 1.8rem; font-family: 'KaTeX';">$$ L = log\hspace{2pt}p(x|z_q(x)) + ||\hspace{1pt}sg[z_e(x)] - e\hspace{1pt}||_2^2 + ||\hspace{1pt}z_e(x) - sg[e]\hspace{1pt}||_2^2$$</p>
-            
-            
+            <br>
+            <p>Another key in optimizing the entire network comes from the relation of encoder output latent vectors and
+                the Codebook latent vectors. By design, we want encoder vectors to be as close as possible to the
+                Codebook vectors and Codebook vectors to be as close as possible to the Encoder vectors. To satisfy
+                this, we add a loss term associated with each case to the objective function. </p>
+            <p style="font-size: 1.8rem; font-family: 'KaTeX';">$$ L = log\hspace{2pt}p(x|z_q(x)) +
+                ||\hspace{1pt}sg[z_e(x)] - e\hspace{1pt}||_2^2 + \beta||\hspace{1pt}z_e(x) - sg[e]\hspace{1pt}||_2^2
+                \tag {9}$$
+            </p>
+            <p>Let us investigate the each loss term one by one. The first term is called the <span
+                    style="color: rgb(246, 51, 102)">reconstruction term</span> and it optimizes both Encoder and
+                Decoder network parameters. The second term, which is called <span
+                    style="color: rgb(246, 51, 102)">alignment loss</span>, optimizes the Codebook vectors only. Here,
+                gradient only flows to the Codebook vectors and Encoder network parameters are simply detached
+                (stop-gradient sg). Finally, the last term, which is called the <span
+                    style="color: rgb(246, 51, 102)">commitment loss</span> optimizes the Encoder parameters only, note
+                that gradients through Codebook vectors are ignored via stop-gradient operation again.</p>
+            <br>
+            <h1>🍁 Learnt Prior</h1>
+            <p>At the beginning of our discussion, we mentioned that VQ-VAE uses a learnt prior which comes from a categorical distribuion rather than setting it
+                to a fixed distribuion. Recall that, as far as image synthesis task is concerned samples of the posterior
+                distribution are feature map, i.e collection of multiple discrete codes. If the Encoder outputs N latent codes, we have:</p>
+            <p style="font-size: 1.8rem; font-family: 'KaTeX';">$$ z \sim q(z|x) $$</p>
+            <p style="font-size: 1.8rem; font-family: 'KaTeX';">$$ z = [z_1, z_2, ..., z_N]^T $$</p>
+            <p>After training, an autoregressive distribution is fit to the discrete latent space to model the prior p(z) as:</p>
+            <p style="font-size: 1.8rem; font-family: 'KaTeX';">$$ p(z) = p(z_1)\prod_{i=2}^N p(z_i|z_1, ..., z_{i-1}) $$ </p>
+            <p>Authors specifically use the PixelCNN over the discrete latents for images and WaveNet for raw audio.</p>
+            <br>
             <!-- Blog End -->
+            <hr>
+            <h2>References</h2>
+            <p>[1] Oord, Aaron van den and Vinyals, Oriol and Kavukcuoglu, Koray, <a style="color: #fff"href="https://arxiv.org/abs/1711.00937" target="_blank">"Neural Discrete Representation Learning"</a> </p>
+            <p>[2] Kingma, Diederik P and Welling, Max, <a style="color: #fff"href="https://arxiv.org/abs/1312.6114" target="_blank">"Auto-Encoding Variational Bayes"</a> </p>
+            <p>[3] Bengio, Yoshua and Léonard, Nicholas and Courville, Aaron,  <a style="color: #fff"href="https://arxiv.org/abs/1308.3432" target="_blank">"Estimating or Propagating Gradients Through Stochastic Neurons for Conditional Computation"</a> </p>
+            <p>[4] Maddison, Chris J. and Mnih, Andriy and Teh, Yee Whye,  <a style="color: #fff"href="https://arxiv.org/abs/1611.00712" target="_blank">"The Concrete Distribution: A Continuous Relaxation of Discrete Random Variables"</a> </p>
+            <p>[5] Jang, Eric and Gu, Shixiang and Poole, Ben,  <a style="color: #fff"href="https://arxiv.org/abs/1611.01144" target="_blank">"Categorical Reparameterization with Gumbel-Softmax"</a> </p>
+            <p>[6] Niepert, Mathias and Minervini, Pasquale and Franceschi, Luca,  <a style="color: #fff"href="https://arxiv.org/abs/2106.01798" target="_blank">"Implicit MLE: Backpropagating Through Discrete Exponential Family Distributions"</a> </p>
+            <p>[7] Oord, Aaron van den and Kalchbrenner, Nal and Kavukcuoglu, Koray,  <a style="color: #fff"href="https://arxiv.org/abs/1601.06759" target="_blank">"Pixel Recurrent Neural Networks"</a> </p>
+            <p>[8] Oord, Aaron van den and Dieleman, Sander and Zen, Heiga and Simonyan, Karen and Vinyals, Oriol and Graves, Alex and Kalchbrenner, Nal and Senior, Andrew and Kavukcuoglu, Koray,  <a style="color: #fff"href="https://arxiv.org/abs/1609.03499" target="_blank">"WaveNet: A Generative Model for Raw Audio"</a> </p>
+
         </div>
 
         <br><br>
