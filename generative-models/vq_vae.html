@@ -54,7 +54,7 @@
             </figure>
             <h1>🍁 Introduction </h1>
             <p>In this blog post we will explore Vector Quantized Variational Autoencoders that was first published by
-                DeepMind in the paper named <a href="https://arxiv.org/pdf/1711.00937.pdf"
+                DeepMind in the paper named <a target="_blank" href="https://arxiv.org/pdf/1711.00937.pdf"
                     style=" text-decoration: underline; color:rgb(246, 51, 102)">Neural Discrete
                     Representation
                     Learning.</a> The model takes its root from Vector
@@ -77,9 +77,10 @@
 
             <br>
             <h1>🍁 Variational Autoencoders </h1>
-            <p>Variational Autoencoder is a likelihood based latent variable model similar to flow and diffusion models
+            <p>Similar to Flow Models and Diffusion Models, Variational Autoencoder (VAE) is a likelihood based latent
+                variable model
                 that learns a mechanism from the
-                given distribution to simulate new data points. VAEs consist of two stochastic component: <span
+                given distribution to simulate new data points. VAEs consist of two stochastic components: <span
                     style="color: rgb(246, 51, 102)">Encoder</span> and <span
                     style="color: rgb(246, 51, 102)">Decoder.</span></p>
             <figure>
@@ -129,9 +130,8 @@
                     <img src="assets_vqvae/latent_space.png" alt="">
                 </div>
                 <div style="display: flex; justify-content:center">
-                    <figcaption style="margin-top: 10px; font-size:14px; color:#757575;"> Figure 2: The distribution of
-                        latent space, the distribution represented by Encoder and the distribution represented by
-                        Decoder respectively. </figcaption>
+                    <figcaption style="margin-top: 10px; font-size:14px; color:#757575;"> Figure 2: Latent space is a
+                        low-dimensional manifold (2D above) in a higher-dimensional space (3D above). </figcaption>
                 </div>
             </figure>
 
@@ -143,7 +143,83 @@
                 we need to marginalize out z:</p>
             <p style="font-size: 1.8rem; font-family: 'KaTeX';"> $$p(x) = \int_{z \in \mathbb{Z}} p(x|z)p(z)dz \tag{2}$$
             </p>
+            <p>The above integration is taken in the entire Z space which is often non-tractable (although there are
+                tractable ones such as <span style="color: rgb(246, 51, 102)">Probabilistic PCA</span>). The prominent
+                problem is that p(z|x) puts a very low mass to
+                a wide region and high mass to a very restricted region. </p>
+            <figure>
+                <div style="display: flex; justify-content:center">
+                    <img src="assets_vqvae/latent_mass.png" alt="">
+                </div>
+                <div style="display: flex; justify-content:center">
+                    <figcaption style="margin-top: 10px; font-size:14px; color:#757575;"> Figure 3: Latent space is a
+                        low-dimensional manifold (2D above) in a higher-dimensional space (3D above). </figcaption>
+                </div>
+            </figure>
+            <p>As a consequence of this issue, due to <span style="color: rgb(246, 51, 102)">curse of
+                    dimensionality</span> applying Monte Carlo approximation would not be effective as the
+                dimension of latent space increases. An alternative solution comes from <span
+                    style="color: rgb(246, 51, 102)">Variational Inference.</span> We are going to introduce
+                a new parameterized distribution q(z) and employ the <span style="color: rgb(246, 51, 102)">importance
+                    sampling</span> procedure to the above
+                integation. In order to apply Jensen's Inequality, we are going to consider log-likelihood.</span></p>
+            <p style="font-size: 1.8rem; font-family: 'KaTeX';"> $$ ln\hspace{3pt}p(x) = ln \int_{z \in
+                \mathbb{Z}}p(x|z)p(z)dz \tag{3}$$</p>
+            <p style="font-size: 1.8rem; font-family: 'KaTeX';"> $$= ln \int_{z \in
+                \mathbb{Z}}\frac{q_{\phi}(z)}{q_{\phi}(z)}p(x|z)p(z)dz \tag{4}$$</p>
+            <p style="font-size: 1.8rem; font-family: 'KaTeX';"> $$= ln \hspace{3pt} \mathbb{E}_{z \sim
+                q_{\phi}(z)}\left[\frac{p(x|z)p(z)}{q_{\phi}(z)}\right] \tag{5}$$</p>
+            <p>Since ln is a concave function, we can form <a style="color: rgb(246, 51, 102)" target="_blank"
+                    href="https://en.wikipedia.org/wiki/Jensen%27s_inequality"> Jensen's Inequality</a> right here:</p>
+            <p style="font-size: 1.8rem; font-family: 'KaTeX';"> $$ln\hspace{3pt} p(x)\geq \mathbb{E}_{z \sim
+                q_{\phi}(z)}\hspace{2pt}ln\left[\frac{p(x|z)p(z)}{q_{\phi}(z)}\right] \tag{6}$$</p>
+            <p style="font-size: 1.8rem; font-family: 'KaTeX';"> $$= \mathbb{E}_{z \sim
+                q_{\phi}(z)}\hspace{2pt}\left[\hspace{2pt} ln\hspace{2pt}p(x|z)\hspace{2pt}\right] -
+                KL(ln\hspace{2pt}q_{\phi}(z)\hspace{2pt} ||\hspace{2pt} ln\hspace{2pt} p(z))\tag{7}$$</p>
+            <p>In general <span style="color: rgb(246, 51, 102)">amortized version</span> of variational posterior is
+                used since it is extremely useful representation from the Encoder point of view: It takes an observed
+                data and returns the parameter of the distribution that corresponding latent vector belongs to. When we
+                apply this subtle change to the objective we are left with:</p>
+            <p style="font-size: 1.8rem; font-family: 'KaTeX';"> $$= \mathbb{E}_{z \sim
+                q_{\phi}(z|x)}\hspace{2pt}\left[\hspace{2pt} ln\hspace{2pt}p(x|z)\hspace{2pt}\right] -
+                KL(ln\hspace{2pt}q_{\phi}(z|x)\hspace{2pt} ||\hspace{2pt} ln\hspace{2pt} p(z))\tag{8}$$</p>
+            <p>Encoder network will be responsible for outputing parameters of the approximate posterior q(z|x).</p>
 
+            <h2>🍁 Likelihood</h2>
+            <p>Likelihood models the distribution of x given the latent vector z and it is represented by Decoder
+                network. It is significant to be aware of that Decoder network is also stochastic just like Encoder. As
+                opposed to Encoder output distribution which is Gaussian Normal most of the case, we need to choose
+                Decoder output distribution wisely based on the specific problem at hand. </p>
+            <br>
+            <p>For example, if we form a
+                network that synthesize a gray scale image such as MNIST, outputing <span
+                    style="color: rgb(246, 51, 102)">Bernoulli Distribution</span> parameter is
+                a natural choice. On the other hand, if we model: </p>
+            <p style="font-size: 1.8rem; font-family: 'KaTeX';">$$ x \in \{0, 1, ..., 255\}^N $$</p>
+            <p>Then <span style="color: rgb(246, 51, 102)"> Categorical Distribution</span> or <span
+                    style="color: rgb(246, 51, 102)">Logistic Mixture Distribution</span> would be natural choices.</p>
+
+            <h1>🍁 VQ-VAE Architecture</h1>
+            <p>Vector Quantized VAE is composed of 3 main components: <span
+                    style="color: rgb(246, 51, 102)">Encoder</span>, <span
+                    style="color: rgb(246, 51, 102)">Decoder</span> and <span
+                    style="color: rgb(246, 51, 102)">Codebook.</span> Different than ordinary VAE, Encoder network
+                outputs a latent feature map, in other words multiple latent vectors, rather than a single latent
+                vector. Then the L2 distance between each latent vector belonging to the Encoder output and the latent
+                vectors belonging Codebook is calculated. As a result of this computation, the <span
+                    style="color: rgb(246, 51, 102)">index</span> of the latent code
+                in the Codebook that resulted in the minimum distance is recorded. </p>
+            <figure>
+                <div style="display: flex; justify-content:center">
+                    <img src="assets_vqvae/vq_vae.png" alt="">
+                </div>
+                <div style="display: flex; justify-content:center">
+                    <figcaption style="margin-top: 10px; font-size:14px; color:#757575;"> Figure 3: Latent space is a
+                        low-dimensional manifold (2D above) in a higher-dimensional space (3D above). </figcaption>
+                </div>
+            </figure>
+            <p>The resultant vector that consists of the indexes of Codebook forms a sample of posterior distribuion
+                q(z|x) over the latent space. Then Decoder takes the collection of multiple Codebook latent vectors that are denoted by the indexes of samples of the posterior q(z|x).</p>
             <!-- Blog End -->
         </div>
 
