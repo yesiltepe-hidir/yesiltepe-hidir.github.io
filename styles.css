@@ -724,7 +724,7 @@ mjx-stretchy-v mjx-c, mjx-stretchy-h mjx-c {
 .social .contact-icons {
     display: flex;
     gap: 15px;
-    margin: 20px 0;
+    margin: 6px 0 0;
 }
 
 .social .contact-icons a {
@@ -753,6 +753,15 @@ mjx-stretchy-v mjx-c, mjx-stretchy-h mjx-c {
     font-variant: normal;
     text-rendering: auto;
     line-height: 1;
+}
+
+/* Tighten spacing of social block within text */
+.social {
+    margin-bottom: 0;
+}
+
+.social + p {
+    margin-top: 0.35rem;
 }
 
 /* Custom X (Twitter) icon fallback */
@@ -837,5 +846,64 @@ mjx-stretchy-v mjx-c, mjx-stretchy-h mjx-c {
 [data-theme-setting="light"] #light-toggle-dark,
 [data-theme-setting="light"] #light-toggle-system {
     display: none !important;
+}
+
+/* Industry experience section */
+.industry-experience h2 {
+    margin-bottom: 1rem;
+}
+
+.industry-card {
+    padding: 1rem;
+    border-radius: 0.5rem;
+    background-color: rgba(0, 0, 0, 0.03);
+}
+
+[data-theme="dark"] .industry-card {
+    background-color: rgba(255, 255, 255, 0.03);
+}
+
+.company-logo {
+    max-height: 60px;
+    object-fit: contain;
+}
+
+.industry-role {
+    font-weight: 600;
+}
+
+.industry-dates {
+    font-size: 0.9rem;
+    color: #6c757d;
+}
+
+/* News table readability in light mode */
+[data-theme="light"] .news .table-dark {
+    background-color: transparent;
+    color: #212529;
+}
+
+[data-theme="light"] .news .table-dark th,
+[data-theme="light"] .news .table-dark td {
+    color: #212529;
+    border-color: rgba(0, 0, 0, 0.1);
+}
+
+/* Cool purple hyperlinks in main content */
+.post a {
+    color: #058793;
+}
+
+.post a:hover,
+.post a:focus {
+    color: #5a2bb3;
+    text-decoration: underline;
+}
+
+/* Preserve button text color */
+.post a.btn,
+.post a.btn:hover,
+.post a.btn:focus {
+    color: #ffffff;
 }
 
