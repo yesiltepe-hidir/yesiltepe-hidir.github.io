@@ -877,6 +877,17 @@ mjx-stretchy-v mjx-c, mjx-stretchy-h mjx-c {
     color: #6c757d;
 }
 
+/* Keep the latest news visible while allowing older entries to scroll. */
+.news {
+    margin-bottom: 1.5rem;
+}
+
+.news .table-responsive {
+    max-height: 20rem;
+    overflow-y: auto;
+    scrollbar-gutter: stable;
+}
+
 /* News table readability in light mode */
 [data-theme="light"] .news .table-dark {
     background-color: transparent;
