@@ -720,6 +720,54 @@ mjx-stretchy-v mjx-c, mjx-stretchy-h mjx-c {
     src: url("https://cdn.jsdelivr.net/npm/mathjax@3.2.2/es5/output/chtml/fonts/woff-v2/MathJax_Vector-Bold.woff") format("woff");
 }
 
+/* Research availability across the width of the introduction */
+.research-availability {
+    display: flex;
+    align-items: center;
+    gap: 1.5rem;
+    margin: 1rem 0 1.5rem;
+    padding: 1rem 1.25rem;
+    border-left: 3px solid #058793;
+    border-radius: 0 0.35rem 0.35rem 0;
+    background-color: rgba(5, 135, 147, 0.06);
+    color: var(--global-text-color);
+    font-size: 0.95rem;
+    line-height: 1.6;
+    text-align: left;
+}
+
+.research-availability p {
+    flex: 1;
+    margin: 0;
+}
+
+.research-availability a {
+    flex-shrink: 0;
+    font-weight: 600;
+    white-space: nowrap;
+}
+
+.research-availability a span {
+    color: inherit;
+}
+
+[data-theme="dark"] .research-availability {
+    border-color: #65cbd4;
+    background-color: rgba(101, 203, 212, 0.08);
+}
+
+[data-theme="dark"] .research-availability a {
+    color: #65cbd4;
+}
+
+@media (max-width: 575px) {
+    .research-availability {
+        flex-direction: column;
+        align-items: flex-start;
+        gap: 0.5rem;
+    }
+}
+
 /* Social media icons styling */
 .social .contact-icons {
     display: flex;
