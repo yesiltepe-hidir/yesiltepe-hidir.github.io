@@ -741,6 +741,10 @@ mjx-stretchy-v mjx-c, mjx-stretchy-h mjx-c {
     margin: 0;
 }
 
+.research-availability .fa-circle-info {
+    color: #058793;
+}
+
 .research-availability a {
     flex-shrink: 0;
     font-weight: 600;
@@ -756,7 +760,8 @@ mjx-stretchy-v mjx-c, mjx-stretchy-h mjx-c {
     background-color: rgba(101, 203, 212, 0.08);
 }
 
-[data-theme="dark"] .research-availability a {
+[data-theme="dark"] .research-availability a,
+[data-theme="dark"] .research-availability .fa-circle-info {
     color: #65cbd4;
 }
 
